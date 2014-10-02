@@ -18,8 +18,8 @@ sub translateStrings()
 
 sub translateLine #Contains translation algorithm
 {
-	my $line = $_[0]; #Variable $line gets the attribute passed as parameter
-	
+	my $line = $_[0]; #Variable $line gets the variable passed as parameter
+
 	if ($line =~ /^#!/ && $. == 1)
 	{
 		#Includes the #! line
@@ -38,25 +38,26 @@ sub translateLine #Contains translation algorithm
 
 		$line =~ s/\s*print\s*//g;
 		$line =~ s/\n//g;
-		$line =~ s/["';]//g;
-		$line =~ s/str\(/\$/g;
-		$line =~ s/[\)+]//g;
-
+		$line =~ s/\"\s*\+\s*\"//g; #Performs string concatenation in print statements
+		#$line =~ s///g;
+		if ($line =~ s/[\+\s]+str\s*\(/\$/g)
+		{
+			#print "$line\n";
+			$line =~ s/\)[\s*\+\s*]*/ /g;
+		}
+		$line =~ s/"//g;
+		$line =~ s/ ;//g;
+		
 		print "print \"$line\";\n";
 	}
-	elsif ($line =~ /['"].*['"]/) #If a string
+	elsif ($line =~ /\w+\s*=\s*\w+/)
 	{
-		#Translates strings concatenation
+		#Translates variables
 
-		
-
-		@temp = $line =~ m/[a-zA-Z0-9]+/g;
-		push(@variables, @temp);
-
-		foreach $variable (@variables)
-		{
-			#print "\$$variable";
-		}
+		$line =~ s/;//g;
+		$line =~ s/\n//g;
+		$line =~ s/([a-zA-Z]+[0-9]*)/\$$1/g;
+		print "$line;\n";
 	}
 	else
 	{
@@ -67,7 +68,7 @@ sub translateLine #Contains translation algorithm
 
 #------Main------
 
-if ($#ARGV + 1 == 0) #Read from stdin 	
+if ($#ARGV + 1 == 0) #Read from stdin
 {
 	while ($l = <>)
 	{
@@ -77,7 +78,7 @@ if ($#ARGV + 1 == 0) #Read from stdin
 elsif ($#ARGV + 1 == 1) #Open and read from file
 {
 	open(F,"<$ARGV[0]") or die "$0: Can't open $ARGV[0]: $!\n";
-	
+
 	while(<F>)
 	{
 		translateLine($_);
@@ -85,3 +86,16 @@ elsif ($#ARGV + 1 == 1) #Open and read from file
 
 	close(F);
 }
+
+=pod
+#OTHER-----------------------------
+
+#---print with str---------
+		$line =~ s/\s*print\s*//g;
+		$line =~ s/\n//g;
+		$line =~ s/["';]//g;
+		$line =~ s/str\s*\(/\$/g;
+		$line =~ s/[\)\+]//g;
+#---------------------------
+
+=cut
