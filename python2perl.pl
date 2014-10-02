@@ -6,16 +6,6 @@
 
 #------Subroutines------
 
-sub translateVariables()
-{
-	
-}
-
-sub translateStrings()
-{
-	
-}
-
 sub translateLine #Contains translation algorithm
 {
 	my $line = $_[0]; #Variable $line gets the variable passed as parameter
@@ -37,18 +27,27 @@ sub translateLine #Contains translation algorithm
 		#Translates print
 
 		$line =~ s/\s*print\s*//g;
+		$line =~ s/;//g;
 		$line =~ s/\n//g;
 		$line =~ s/\"\s*\+\s*\"//g; #Performs string concatenation in print statements
-		#$line =~ s///g;
+		#print "$line\n";		
+
 		if ($line =~ s/[\+\s]+str\s*\(/\$/g)
 		{
-			#print "$line\n";
-			$line =~ s/\)[\s*\+\s*]*/ /g;
+			$line =~ s/\)[\s*\+\s*]*//g;
 		}
-		$line =~ s/"//g;
+		elsif ($line =~ m/['"].*["']/g)
+		{
+			#do nothing
+		}
+		else
+		{
+			$line =~ s/([a-zA-Z]+[0-9]*)/\$$1/g;
+		}
+		$line =~ s/["']//g;
 		$line =~ s/ ;//g;
 		
-		print "print \"$line\";\n";
+		print "print \"$line\\n\";\n";
 	}
 	elsif ($line =~ /\w+\s*=\s*\w+/)
 	{
