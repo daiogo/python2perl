@@ -27,27 +27,29 @@ sub translateLine #Contains translation algorithm
 		#Translates print
 
 		$line =~ s/\s*print\s*//g;
-		$line =~ s/;//g;
-		$line =~ s/\n//g;
-		$line =~ s/\"\s*\+\s*\"//g; #Performs string concatenation in print statements
-		#print "$line\n";		
+		$line =~ s/[;\n]//g;
+		$line =~ s/\"\s*\+\s*\"//g; #Performs string concatenation in print statements		
 
 		if ($line =~ s/[\+\s]+str\s*\(/\$/g)
 		{
 			$line =~ s/\)[\s*\+\s*]*//g;
+			$line =~ s/["']//g;
+			print "print \"$line\\n\";\n";
 		}
 		elsif ($line =~ m/['"].*["']/g)
 		{
+			$line =~ s/["']//g;
+			print "print \"$line\\n\";\n";
 			#do nothing
 		}
 		else
 		{
+			#print "LOL!\n";
 			$line =~ s/([a-zA-Z]+[0-9]*)/\$$1/g;
+			print "print $line;\n";
+			print "print \"\\n\";\n";
 		}
-		$line =~ s/["']//g;
-		$line =~ s/ ;//g;
-		
-		print "print \"$line\\n\";\n";
+
 	}
 	elsif ($line =~ /\w+\s*=\s*\w+/)
 	{
