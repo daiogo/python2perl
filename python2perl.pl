@@ -4,8 +4,19 @@
 #Based on http://www.cse.unsw.edu.au/~cs2041/assignments/python2perl
 #Written by Diogo G. Garcia de Freitas (dggf.93@gmail.com) September 2014
 
+#------Subroutines------
 
-sub translateLine #Contains whole translation algorithm
+sub translateVariables()
+{
+	
+}
+
+sub translateStrings()
+{
+	
+}
+
+sub translateLine #Contains translation algorithm
 {
 	my $line = $_[0]; #Variable $line gets the attribute passed as parameter
 	
@@ -21,15 +32,23 @@ sub translateLine #Contains whole translation algorithm
 
 		print "$line";
 	}
-	elsif ($line =~ /^\s*print\s*"(.*)"\s*$/)
+	elsif ($line =~ /\s*print\s*[("']*.*[)"']*/)
 	{
-		#Python's print print a new-line character by default, so we need to add it explicitly to the Perl print statement		
+		#Translates print
 
-		print "print \"$1\\n\";\n";
+		$line =~ s/\s*print\s*//g;
+		$line =~ s/\n//g;
+		$line =~ s/["';]//g;
+		$line =~ s/str\(/\$/g;
+		$line =~ s/[\)+]//g;
+
+		print "print \"$line\";\n";
 	}
-	elsif ($line =~ /^['"].*['"]/) #If not a string 
+	elsif ($line =~ /['"].*['"]/) #If a string
 	{
-		#Translates variable names
+		#Translates strings concatenation
+
+		
 
 		@temp = $line =~ m/[a-zA-Z0-9]+/g;
 		push(@variables, @temp);
@@ -46,12 +65,13 @@ sub translateLine #Contains whole translation algorithm
 	}
 }
 
+#------Main------
 
 if ($#ARGV + 1 == 0) #Read from stdin 	
 {
 	while ($l = <>)
 	{
-		#translateLine($l);
+		translateLine($l);
 	}	
 }
 elsif ($#ARGV + 1 == 1) #Open and read from file
@@ -59,8 +79,7 @@ elsif ($#ARGV + 1 == 1) #Open and read from file
 	open(F,"<$ARGV[0]") or die "$0: Can't open $ARGV[0]: $!\n";
 	
 	while(<F>)
-	{	
-		#print "$_\n"; #debugging
+	{
 		translateLine($_);
 	}
 
