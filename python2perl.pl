@@ -103,4 +103,3 @@ elsif ($#ARGV + 1 == 1) #Open and read from file
 
 	close(F);
 }
-
