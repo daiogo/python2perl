@@ -4,8 +4,6 @@
 #Based on http://www.cse.unsw.edu.au/~cs2041/assignments/python2perl
 #Written by Diogo G. Garcia de Freitas (dggf.93@gmail.com) September 2014
 
-#------Subroutines------
-
 sub translateLine #Contains translation algorithm
 {
 	my $line = $_[0]; #Variable $line gets the variable passed as parameter
@@ -60,6 +58,24 @@ sub translateLine #Contains translation algorithm
 		$line =~ s/([a-zA-Z]+[0-9]*)/\$$1/g;
 		print "$line;\n";
 	}
+	elsif ($line =~ /^\s*break;*$/)
+	{
+		#Translates break to last
+
+		$line =~ s/;//;
+		$line =~ s/\n//g;
+		$line =~ s/break/last/;
+		print "$line;\n";
+	}
+	elsif ($line =~ /^\s*continue;*$/)
+	{
+		#Translates continue to next
+
+		$line =~ s/;//;
+		$line =~ s/\n//g;
+		$line =~ s/continue/next/;
+		print "$line;\n";
+	}
 	else
 	{
 		#Lines we can't translate are turned into comments
@@ -67,14 +83,14 @@ sub translateLine #Contains translation algorithm
 	}
 }
 
-#------Main------
+
 
 if ($#ARGV + 1 == 0) #Read from stdin
 {
 	while ($l = <>)
 	{
 		translateLine($l);
-	}	
+	}
 }
 elsif ($#ARGV + 1 == 1) #Open and read from file
 {
@@ -88,15 +104,3 @@ elsif ($#ARGV + 1 == 1) #Open and read from file
 	close(F);
 }
 
-=pod
-#OTHER-----------------------------
-
-#---print with str---------
-		$line =~ s/\s*print\s*//g;
-		$line =~ s/\n//g;
-		$line =~ s/["';]//g;
-		$line =~ s/str\s*\(/\$/g;
-		$line =~ s/[\)\+]//g;
-#---------------------------
-
-=cut
