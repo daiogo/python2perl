@@ -84,7 +84,6 @@ sub translateLine #Contains translation algorithm
 }
 
 
-
 if ($#ARGV + 1 == 0) #Read from stdin
 {
 	while ($l = <>)
